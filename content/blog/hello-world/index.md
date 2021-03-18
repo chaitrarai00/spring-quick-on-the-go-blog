@@ -1,231 +1,115 @@
 ---
-title: Hello World
-date: "2015-05-01T22:12:03.284Z"
-description: "Hello World"
+title: Spring Summary
+date: "2021-03-18T22:12:03.284Z"
+description: "Spring Summarized"
 ---
+Spring Framework is one of the most popular frameworks of Java Enterprise Edition. Developed by Rod Johnson, java developers prefer Spring to develop efficient applications.(one line intro)
 
-This is my first post on my new fake blog! How exciting!
+Spring container (represented by org.springframework.context.ApplicationContext) is said to be the core/ heart of the spring framework. The container creates the objects, wires them together, configure them and manage their complete life cycle. 
+The containers get information on what to instantiate, assemble and configure from reading configuration metadata (represented in the form of XML: xml based, annotations: annotation-based or java code: java-based)
+Spring Container is the star all-rounder managing to give to readymade objects to work on your application.
+ 
 
-I'm sure I'll write a lot more interesting things in the future.
 
-Oh, and here's a great quote from this Wikipedia on
-[salted duck eggs](https://en.wikipedia.org/wiki/Salted_duck_egg).
+Inversion of control is achieved by dependency injection:
+It’s a process by which objects define their dependencies (other objects they work with) through constructor arguments (constructor injection) or Properties set to objects (setter injection) after they are constructed or returned from a factory method. The spring container the injects those dependencies when it creates the bean. 
 
-> A salted duck egg is a Chinese preserved food product made by soaking duck
-> eggs in brine, or packing each egg in damp, salted charcoal. In Asian
-> supermarkets, these eggs are sometimes sold covered in a thick layer of salted
-> charcoal paste. The eggs may also be sold with the salted paste removed,
-> wrapped in plastic, and vacuum packed. From the salt curing process, the
-> salted duck eggs have a briny aroma, a gelatin-like egg white and a
-> firm-textured, round yolk that is bright orange-red in color.
+Beans are objects that are instantiated, assembled and managed by containers and is an important part of any application. @bean produces a bean to be managed by spring container.
 
+@Component: indicates a component. Such classes are considered as candidates for auto-detection when we use annotation based configuration and class path scanning.
+
+Configuration metadata represents how a developer instructs the Spring Container to instantiate, configure and assemble the objects in the application.( XML based, annotation based , java based )
+ 
+XML based configured as <bean/> and <beans/>, Import from other file using < import resource=“”/>, Instantiating a container: applicationcontext context = new application context(config.XML /class)
+
+
+
+Spring Core:
+1.Inversion of control? Instead of objects created and the launching the application and application calls objects/objects are created on basis of application needs
+
+6. Make sure to close an AnnotationConfigApplicationContext To release all resources
+
+Spring  Ioc container (part of org.springframework.context and org.springframework.beans) is said to be the core/ heart of the spring framework. The container creates the objects, wire them together “, configure them and manage their complete life cycle.containers get information on what to instantiate , assemble and configure from reading configuration metadata( represented in the form of XML, annotations or java code).
+•	Bean Factory is the root interface of Spring Ioc Container and child Application context is the child interface.
+•	Useful child interfaces of ApplicationContext: ConfigurableApplicationContext and WebApplicationContext
+•	
+( make a tabular representation or a venn diagram kind of thing----we use AnnoationConfigApplicationContext for standalonejava applications with 
+annotation based configuartions and ClassPathXmlApplicationContext, when configuration is loaded from another file system use FileSystemXmlApplicationContext and for web applications: AnnotationconfigWebApplicationContext and XmlWebApplicationContext)
+
+
+
+
+
+
+Inversion of control by dependency injection.
+It’s a process by which objects define their dependencies ( other objects they work with ) through constructor arguments( constructor injection) or Properties set to objects ( setter injection) after they are constructed or returned from a factory method. The spring container the injects those dependencies when it created the bean.
+
+Beans are objects that are instantiated, assembled and managed by containers and is an important part of any application. @bean produces a bean to be managed by spring container. They are any POJO in Spring that is initialized through Spring container. Any object can be a Spring Bean if its configured to be initialized through the container with metadata information. Creating a Bean like creating a recipe( as mentioned in Spring docs) for creating actual multiple instances from them / taking them as basic. Every bean can be defined within the following 5 scopes:
+1.	Singleton
+2.	Prototype
+3.	Request
+4.	Session
+5.	Global-session
+
+@Component: indicates a component. Such classes are considered as candidates for auto-detection when we use annotation based configuration and class path scanning.
+
+Configuration metadata represents how a developer instructs the Spring Container to instantiate, configure and assemble the objects in the application.( XML based, annotation based , java based ?)
+XML based configured as <bean/> and <beans/>
+Import from other file using < import resource=“”/>
+Instantiating a container: applicationcontext context = new application context(config.XML /class)
+
+Spring does the autowiring and calling the methods unknown to the framework by heavy use of Reflection.
+@Autowired is used for automatic dependency injection 
+We can autowire a spring bean by the following ways:
+1.Autowire by name (setter injection :autowire=”byname” beanis and property names should be the same)
+2. Autowire by type (setter injection: autowire:”ByType”)
+3.Autowire by constructor (constructor injection autowire=”constructor”, a aparamatrized constructor is needed)
+
+We use @Autowired annotation for spring bean annotation. They can be used on variables methods for autowiring by type and on constructors for constructor based auto wiring.
+@Qualifier is one of the annotation used in conjunction with @Autowire to avoid conflicts in bean mapping names. We provide the name that has to be used when autowiring occurs in parenthesis.
+Code spring annotations:
+@Bean method is used to return bean to be managed by Spring Context we get the context using the bean name 
+@Component is responsible for some operation and is split into 3 specific categories: service used for business functionality, repository for crud operatoon from dao classes and controller used in web applications and rest webservices to process or handle use request and producs appropriate responses  one use @Compinent less and use the specific 3 annotation more 
+All of these belong to spring context jar and package spring.framewroks.stereotype
+@Configuration Class indicates that the class has bean methods. This allows dependency injection using annotations
+@Configuration: this annotation is used to indicate that a class declares one or more beans (using @Bean). These classes are processed by spring container. The spring container as a result generate bean definitions and service requests for these beans at runtime.
+
+@Bean: this indicate that the method produces a bean that will be managed by spring container. It is used with parameters like name( one can mention the name of the bean), initMethod( mention the methods to be called on context register alternative is @PreConstruct when bean class is defined by developers), destroyMethod( mention the methods to be called on context shutdown alternative is @PreDestroy when bean class is defined by developers)
+@PostConstruct and makes sure that all initialisation happens with respect to the spring bean after its initialized to make sure all initialisation is done properly before client request is processed and  @PreDestroy ensures proper closing of resources when bean instance is removed from context 
+Below will give you an overview on how a Bean survives throughout
 ![Chinese Salty Egg](./salty_egg.jpg)
 
-You can also write code blocks here!
+ 
+.
 
-```js
-const saltyDuckEgg = "chinese preserved food product"
-```
+@Autowired: this annotation help in injecting beans generally @qualifier is used along with this annotation to avoid confusion 
+@ComponentScan: provides scanning directions for use to @Configuration. Here we can mention base package for scanning spring components.
+@Component:signifies that the class is a component this makes it eligible for auto detection 
+@Propertysource/@propertysources : declaration  of property source into spring environment from a mentioned property file during Runtime 
+@Value: inject value to the property on runtime referring to property file ( cross check with example) 
+@Service : this is a specialisation of component this class indicates it’s a Service class and generally used for defining the business logic that is service layer classes more on grounds of singnifying increased readability and specifying intent better a conventional thing to be specific 
+@Repository: mentions the class to be a repository class usually advised for use in  classes to communicate with the database in DAO classes.
 
-| Number | Title                                    | Year |
-| :----- | :--------------------------------------- | ---: |
-| 1      | Harry Potter and the Philosopher’s Stone | 2001 |
-| 2      | Harry Potter and the Chamber of Secrets  | 2002 |
-| 3      | Harry Potter and the Prisoner of Azkaban | 2004 |
 
-[View raw (TEST.md)](https://raw.github.com/adamschwartz/github-markdown-kitchen-sink/master/README.md)
+Points to remember are 
+1. spring Mvc annotation: @controller, @RequestMapping,@RequestParam, @RequestBody, @ResponseBody,@RequestHeader, @ResponseHeader,@PathVariable, @ModelAttribute
+2. Spring transactional annotation: transaction management annotation:@Transactional
+3.spring security annotation:@EnableWebSecurity used with @Configuration to have spring security configuration defined 
+4.Springboot configuration : @SpringBootApplication
+@EnableAutoConfiguration
+5. Spring framework jars:spring context , spring aop, spring beans,spring expression, spring core, commons-logging
 
-This is a paragraph.
+@Controller classes are used with handler methods. Generally used in mvc applications indicates that the class is a web request handler. 
 
-    This is a paragraph.
+@RestController is a convenience specific annotation used in cases  where controller is a request handler of restful web services. It itself is annotated with @Controller and @ResponseBody. Spring rest controller handles mapping request data to the request handler method  and once response is generated from the request handler converts it to JSON or XML format 
 
-# Header 1
+Spring @value is used to assign default values to variables and method arguments @value annotation argument would we strong only but spring tries to covert it to relevant data type
 
-## Header 2
+@PropertySource/@PropertySources : Inject properties to spring environment(Environment Interface representing the environment in which the current application is running.
+ * Models two key aspects of the application environment: <em>profiles</em> and
+ * <em>properties</em>)
 
-    Header 1
-    ========
+@Async is used to create asynchronous methods and to create method call in a separate thread
 
-    Header 2
-    --------
 
-# Header 1
-
-## Header 2
-
-### Header 3
-
-#### Header 4
-
-##### Header 5
-
-###### Header 6
-
-    # Header 1
-    ## Header 2
-    ### Header 3
-    #### Header 4
-    ##### Header 5
-    ###### Header 6
-
-# Header 1
-
-## Header 2
-
-### Header 3
-
-#### Header 4
-
-##### Header 5
-
-###### Header 6
-
-    # Header 1 #
-    ## Header 2 ##
-    ### Header 3 ###
-    #### Header 4 ####
-    ##### Header 5 #####
-    ###### Header 6 ######
-
-> Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
-
-    > Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
-
-> ## This is a header.
->
-> 1. This is the first list item.
-> 2. This is the second list item.
->
-> Here's some example code:
->
->     Markdown.generate();
-
-    > ## This is a header.
-    > 1. This is the first list item.
-    > 2. This is the second list item.
-    >
-    > Here's some example code:
-    >
-    >     Markdown.generate();
-
-- Red
-- Green
-- Blue
-
-* Red
-* Green
-* Blue
-
-- Red
-- Green
-- Blue
-
-```markdown
-- Red
-- Green
-- Blue
-
-* Red
-* Green
-* Blue
-
-- Red
-- Green
-- Blue
-```
-
-- `code goes` here in this line
-- **bold** goes here
-
-```markdown
-- `code goes` here in this line
-- **bold** goes here
-```
-
-1. Buy flour and salt
-1. Mix together with water
-1. Bake
-
-```markdown
-1. Buy flour and salt
-1. Mix together with water
-1. Bake
-```
-
-1. `code goes` here in this line
-1. **bold** goes here
-
-```markdown
-1. `code goes` here in this line
-1. **bold** goes here
-```
-
-Paragraph:
-
-    Code
-
-<!-- -->
-
-    Paragraph:
-
-        Code
-
----
-
----
-
----
-
----
-
----
-
-    * * *
-
-    ***
-
-    *****
-
-    - - -
-
-    ---------------------------------------
-
-This is [an example](http://example.com "Example") link.
-
-[This link](http://example.com) has no title attr.
-
-This is [an example][id] reference-style link.
-
-[id]: http://example.com "Optional Title"
-
-    This is [an example](http://example.com "Example") link.
-
-    [This link](http://example.com) has no title attr.
-
-    This is [an example] [id] reference-style link.
-
-    [id]: http://example.com "Optional Title"
-
-_single asterisks_
-
-_single underscores_
-
-**double asterisks**
-
-**double underscores**
-
-    *single asterisks*
-
-    _single underscores_
-
-    **double asterisks**
-
-    __double underscores__
-
-This paragraph has some `code` in it.
-
-    This paragraph has some `code` in it.
-
-![Alt Text](https://placehold.it/200x50 "Image Title")
-
-    ![Alt Text](https://placehold.it/200x50 "Image Title")
+            
