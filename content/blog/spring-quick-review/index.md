@@ -72,7 +72,7 @@ All of these belong to spring context jar and package spring.framewroks.stereoty
 @Bean: this indicate that the method produces a bean that will be managed by spring container. It is used with parameters like name( one can mention the name of the bean), initMethod( mention the methods to be called on context register alternative is @PreConstruct when bean class is defined by developers), destroyMethod( mention the methods to be called on context shutdown alternative is @PreDestroy when bean class is defined by developers)
 @PostConstruct and makes sure that all initialisation happens with respect to the spring bean after its initialized to make sure all initialisation is done properly before client request is processed and @PreDestroy ensures proper closing of resources when bean instance is removed from context
 Below will give you an overview on how a Bean survives throughout
-![Chinese Salty Egg](./salty_egg.jpg)
+![Lifecycle of a Bean survival](./LifecycleofBean.png)
 
 .
 
