@@ -1,5 +1,5 @@
 ---
-title: Spring Summary
+title: Spring JDBC
 date: "2021-03-28T22:12:03.284Z"
 description: "Spring JDBC"
 ---
