@@ -11,25 +11,26 @@ JDBC: lot of boilerplate
 Spring JDBC: a layer was provided ad gave a template for mapping and retrieval.
 
 Let’s see how and where Hibernate came from first
-•	An ORM tool
-•	Implements JPA
-•	Used in data layer application
+• An ORM tool
+• Implements JPA
+• Used in data layer application
 
 Difference between jdbc and hibernate:
 JDBC Saving:
-•	JDBC Database Configuration
-•	Create Model Object
-•	Service method to create/instantiate model object
-•	Database design
-•	DAO method to save the object using SQL queries
+• JDBC Database Configuration
+• Create Model Object
+• Service method to create/instantiate model object
+• Database design
+• DAO method to save the object using SQL queries
 Hibernate Saving:
-•	Hibernate Configuration
-•	Create Model Object using Annotation
-•	Service calls hibernate API to instantiate object
-•	Database design is not needed
-•	DAO method to save the object using SQL queries is not needed
+• Hibernate Configuration
+• Create Model Object using Annotation
+• Service calls hibernate API to instantiate object
+• Database design is not needed
+• DAO method to save the object using SQL queries is not needed
 
-Hibernate configuration file: hibernate.cfg.xml copy from other internet files and modify the configuration in your system based on your needs. Some configurations: 
+Hibernate configuration file: hibernate.cfg.xml copy from other internet files and modify the configuration in your system based on your needs. Some configurations:
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 
@@ -41,19 +42,19 @@ Hibernate configuration file: hibernate.cfg.xml copy from other internet files a
 <mapping class="org.dto.UserDetails"/>
 
 <!-- Drop and recreate the db schema on every startup-->
- <property name="hbm2ddl.auto">create</property> 
+ <property name="hbm2ddl.auto">create</property>
 <!-- update in case of changes in the database only and do not new create a db-->
- <property name="hbm2ddl.auto">update</property> 
+ <property name="hbm2ddl.auto">update</property>
 <!-- to echo and show all sql commands on execution-->
- <property name="show_sql">true</property> 
+ <property name="show_sql">true</property>
 ```
 
+@Entity to define a Table as the entity class and @id is the primary key
 
-@Entity to define a Table as the entity class and @id is the primary key 
 ```java
 @Entity(name="User_Details")
 public class UserDetails {
-	
+
 	@Id
 	@Column(name="user_id")
 	private int userid;
@@ -71,20 +72,19 @@ public class UserDetails {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	
+
 }
 ```
 
-
-
 Create session factory and session object
+
 ```java
 UserDetails user=new UserDetails();
 user.setUserid(1);
 user.setUsername("abc");
 
 SessionFactory sessionFactory=new Configuration().configure().buildsessionFactory();
-/*get SessionFactory by reading the configuration file-->one can mention path 
+/*get SessionFactory by reading the configuration file-->one can mention path
 *inside configure if it is specific other than deafult hibernate.cfg.xml
 *build the session factory and store that in the local sessionFactory object
 */
@@ -98,27 +98,25 @@ session.getTransaction().commit();
 //to end the transactions it has to be commited to end and reflect changes
 ```
 
-
-
-
-
 Some more annotations:
 @Table: When the requirement is to change only the db table name and keep the class name/entity name as mentioned in class level. UserDetails will remain the entity name and table name in the database would be User_Details.
+
 ```java
 @Entity
 @Table(name="User_Details")
 public class UserDetails {
 ```
 
-There could be requirements where we might need some values to not be saved in the database. It could be counter you need to track some value or some url / value you need user to view but not the database to store(Note transient ijn serialization means the value is not to be serialized an object can be transient as in not stored In db still serialized so keep in mind the transient for serialization and @Transient is different). Such values or attributes have to be marked as a 
+There could be requirements where we might need some values to not be saved in the database. It could be counter you need to track some value or some url / value you need user to view but not the database to store(Note transient ijn serialization means the value is not to be serialized an object can be transient as in not stored In db still serialized so keep in mind the transient for serialization and @Transient is different). Such values or attributes have to be marked as a
 
 ```java
 @Transient //do not store in database
-@Temporal(TemporalType.DATE) //@Temporal(TemporalType.TIME) //To save the date/ time specifically 
+@Temporal(TemporalType.DATE) //@Temporal(TemporalType.TIME) //To save the date/ time specifically
 @Lob @Clob @Blob //attributes which would store very large text sizes/character size/ byte size
 ```
 
 Fetching an object in Hibernate
+
 ```java
 SessionFactory sessionFactory=new Configuration().configure().buildsessionFactory();
 Session session=sessionFactory.openSession();
@@ -128,14 +126,16 @@ UserDetails user=(UserDetails)session.get(UserDetails.class,1);
 ```
 
 Surrogate Primary Keys: The primary keys that are not needed/ generated in business terms or the once that do not have a business related meaning and meant only to keep track of the uniqueness of the attributes can be actually asked to be generated by hibernate rather that assigning them.
+
 ```java
 @GeneratedValue(strategy=GenerationType.AUTO)
 private id;
 //GenerationType is an Enum with values AUTO,IDENTITY,SEQUENCE,TABLE:AUTO lets hibernate chose the way to generate the unique values
 ```
 
-***Value Types and Embedded Objects***
+**_Value Types and Embedded Objects_**
 There are certain attributes with respect to a Entity which are deeply associated with it and is incomplete in meaning by itself like address to USerDetails Table such entities are to be defined as @Embeddable and declared as @Embedded attributes.
+
 ```java
 @Embeddable
 public class Address{
@@ -152,10 +152,10 @@ public class UserDetails {
 
 Say we need to store multiple addresses like permenant, official addresses etc:
 We might have to differentiate each of them by annotating as below :
- @Embedded
+@Embedded
 @AttributeOverrides({@AttributeOverride(name=””,column=@Column(name=”HOME”)})
 private Address address;
-                                   OR
+OR
 @Embedded
 @ElementCollection
 @JoinTable(name=””,joinColumns=@joinColumn())
@@ -165,123 +165,142 @@ private Set<Address> addresses=new HashSet<>();
 if primary key is embedded mention it as @EmbeddedId
 and joining and mui
 
-***Lazy Initialization and Early Initialization***
+**_Lazy Initialization and Early Initialization_**
 Lazy Initilization is a strategy where when an object is initialized only the first level members are initlize, the associated objects are initialized only when they are explicitly accesed (like address in above example) that means when in need.This is used by default in hibernate and saves a lot of time and resources.
 Eager Intialization is the opposite here the all objects and associated objects are initilaised at once.
 When in need Hibernate can be oved from its default behariour to be eager by making fetch=FetchType.EAGER.
-Hibernate when it runs, when accessing an object creates a proxy object( that is a subclass of the real object hence having the same behavior)it tries to access and it operates on top of this proxy and does the operation. 
-***DataBase entries during Association types( OnetoOne Manytomany onetomany and vice versa)***
+Hibernate when it runs, when accessing an object creates a proxy object( that is a subclass of the real object hence having the same behavior)it tries to access and it operates on top of this proxy and does the operation.
+**_DataBase entries during Association types( OnetoOne Manytomany onetomany and vice versa)_**
 @OnetoOne
-1.	create first table
-2.	create second table
-3.	update forign key to relate in table
-@OnetoMany or @ManytoOne
-1.	create first table
-2.	create second table
-3.	create new table and insert relationship between first and second table
-@ManytoMany
-1.	create first table
-2.	create second table
-3.	create new table and insert relationship between first and second table
-4.	create another relationship table for relationship between first and second
-to avoid to relationship table mention in one entity attributes that the associated object is the same as mentioned in other place as in @ManytoMany(mappedBy=”address”)
 
-**To avoid hibernate to throw exception when a data is not found add an annotation above required attribute as:
+1. create first table
+2. create second table
+3. update forign key to relate in table
+   @OnetoMany or @ManytoOne
+4. create first table
+5. create second table
+6. create new table and insert relationship between first and second table
+   @ManytoMany
+7. create first table
+8. create second table
+9. create new table and insert relationship between first and second table
+10. create another relationship table for relationship between first and second
+    to avoid to relationship table mention in one entity attributes that the associated object is the same as mentioned in other place as in @ManytoMany(mappedBy=”address”)
+
+\*\*To avoid hibernate to throw exception when a data is not found add an annotation above required attribute as:
+
 ```java
 @NotFound(action=NotFoundAction.IGNORE)
 ```
-	Cascade is used to persis objects in case of one to many relationships. Let’s unsaved objects to be saved on save of one object
+
+ Cascade is used to persis objects in case of one to many relationships. Let’s unsaved objects to be saved on save of one object
+
 ```java
-@OnetoMany(cascade=CascadeType.PERSIST) 
+@OnetoMany(cascade=CascadeType.PERSIST)
 ```
 
-**Inheritance in hibernate has to be handled in different ways
-Every class is saved in a single table increasing the table column wise 
+\*\*Inheritance in hibernate has to be handled in different ways
+Every class is saved in a single table increasing the table column wise
+
 ```java
 @Inheritance(strategy=InheritanceType.SINGLETABLE)
 ```
+
 Every class has a separate table but there could be repeated values in tables and hence redundancy
+
 ```java
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 ```
+
 We avoid redundant values and repeated coulmns to give a joined normalized Table
+
 ```java
 @Inheritance(strategy=InheritanceType.JOINED)
 ```
 
-
-***Hibernate Collections***
+**_Hibernate Collections_**
 Bag Semantic: List/ArrayList unordered
 Bag Semantic with ID: List/ArrayList unordered
 List Semantic: List/ArrayList ordered
 Set Semantic: Set
 Map Semantic: Map
 
-***Crud in hibernate***
+**_Crud in hibernate_**
 Create:
+
 ```java
 for(int i=0;i<5;i++){
 	UserDetails user=new UserDetails();
 	user.setUsername("User"+i)
 	session.save(user) //creating user created above
 }
-```java
+```
+
 Retrieve:
+
 ```java
 UserDetails user=(UserDetails)session.get(UserDetails.class,6);
-```java
+```
+
 Update:
+
 ```java
 UserDetails user=(UserDetails)session.get(UserDetails.class,6);
 user.setUsername("update username");
 session.update(user);
-```java
+```
+
 Delete:
+
 ```java
 UserDetails user=(UserDetails)session.get(UserDetails.class,6);
 session.delete(user);
-```java
+```
 
+**_Transient, Persistent and Detached object_**
 
-***Transient, Persistent and Detached object***
 ![Persistent_Transient_Detached](./Persistent_Transient_Detached.png)
+
 ```java
 UserDetails user1=new UserDetails(); //transient: these changes are not reflected in the database since it goes unnoyiced by Hibernate
 user1.setUsername("User_1"); //transient
 SessionFactory sessionFactory=new Configuration().configure().buildsessionFactory();
 Session session=sessionFactory.openSession();
-session.beginTransaction(); 
+session.beginTransaction();
 session.save(user1);//on save of session the objects go to persistent state changes done after this are recognized and reflected
 user1.setUsername("User_001"); //persistent
 user1.setUsername("User_01"); //persistent //all updates are checked and hibernate smartly considers only the last update done to be taken to the database
 session.getTransaction().commit();
 session.close();
 user1.setUsername("User_1");//detached the changes are not tracked here in detached state so changes have no effect
-```java
+```
+
 ```java
 SessionFactory sessionFactory=new Configuration().configure().buildsessionFactory();
 Session session=sessionFactory.openSession();
-session.beginTransaction(); 
+session.beginTransaction();
 session.save(user1);
 user1.setUsername("User_001"); //persistent
-user1.setUsername("User_01"); //persistent 
+user1.setUsername("User_01"); //persistent
 session.getTransaction().commit();
 session.close();
-user1.setUsername("User_1");//detached 
+user1.setUsername("User_1");//detached
 session.beginTransaction();//start the same session
 session.update(user);//persistent :hence update after change from persistent to detached form
 session.close();
-```java
+```
 
-***Hibernate Query Language***
+**_Hibernate Query Language_**
 In Hibernate Queries are written using HQL (Hibernate Query Language). Here all representations happen in the form of objects and classes and attributes of these classes instead of columns. One does not have to check for table names or column names instead can use the entity details for operations with the database.
 In hibernate:
-1.	Create a Query Object
-2.	Use this query object for retrieving the result
+
+1. Create a Query Object
+2. Use this query object for retrieving the result
+
 ```java
 SessionFactory sessionFactory=new Configuration().configure().buildsessionFactory();
 Session session=sessionFactory.openSession();
-session.beginTransaction(); 
+session.beginTransaction();
 Query query=session.createQuery("from UserDetails where userid>5");
 List<UserDetails> users=query.list();
 Query query=session.createQuery("select username from UserDetails");
@@ -292,23 +311,25 @@ Query query=session.createQuery("select max(userid) from UserDetails");
 //int max=query.
 session.getTransaction().commit();
 session.close();
-```java
+```
+
 Instead of getting large results at once, developers can use pagination techniques to limit the results retrieved.
 
-***Criteria API***
+**_Criteria API_**
 Access by criteria API
+
 ```java
 SessionFactory sessionFactory=new Configuration().configure().buildsessionFactory();
 Session session=sessionFactory.openSession();
-session.beginTransaction(); 
+session.beginTransaction();
 Criteria criteria=session.createCriteria(UserDetails.class);
 criteria.add(Restrictions.eq("sername","User_10).gt("userid",5));// add all restrictions or filters like you would in where clause
 List<UserDetails> users=(List<UserDetails>)criteria.list();
 session.getTransaction().commit();
 session.close();
-```java
+```
 
-***Hibernate Cache***
+**_Hibernate Cache_**
 
 First level cache provided by session in hibernate
-Second level is developer define using @Cache, @Cacheable 
+Second level is developer define using @Cache, @Cacheable
