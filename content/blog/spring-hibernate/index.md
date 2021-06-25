@@ -333,3 +333,34 @@ session.close();
 
 First level cache provided by session in hibernate
 Second level is developer define using @Cache, @Cacheable
+
+**_Combining of Hibernate with Spring_**
+• Use Hibernate Template
+• Easy to test and better exception Handling
+• Integrated Transaction Management
+• Dao class depends on Hibernate Template
+• Hibernate Template was created by SessionFactory ( LocalSessionFactoryBean)
+• LocalSessionFactoryBean takes Annotatedclass, Hibernate Properties and DataSource
+
+```java
+public class SampleDAO {
+
+	@Autowire
+	private HibernateTemplate hibernateTemplate;
+
+	@Transactional
+	public int insert(Sample sample) {
+		Integer i=(Integer)this.hibernateTemplate.save(sample);
+		return i;
+	}
+//more operations with db
+
+@Transactional(noRollbackFor={Exception.class})
+
+@Transactional(rollbackFor={Exception.class})
+
+@Transactional(timeout=1)
+//specify the timeout when db update should happen within
+
+}
+```

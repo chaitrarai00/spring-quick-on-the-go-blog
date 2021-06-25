@@ -11,7 +11,7 @@ The containers get information on what to instantiate, assemble and configure fr
 Spring Container is the star all-rounder managing to give to readymade objects to work on your application.
 ![Spring Container rules it all](./SpringContainerstarofshow.png)
 
-Inversion of control is achieved by dependency injection:
+Inversion of control(Outsourcing creation of Objects) is achieved by dependency injection:
 It’s a process by which objects define their dependencies (other objects they work with) through constructor arguments (constructor injection) or Properties set to objects (setter injection) after they are constructed or returned from a factory method. The spring container the injects those dependencies when it creates the bean.
 
 Beans are objects that are instantiated, assembled and managed by containers and is an important part of any application. @bean produces a bean to be managed by spring container.
@@ -105,3 +105,4 @@ Spring @value is used to assign default values to variables and method arguments
 - <em>properties</em>)
 
 @Async is used to create asynchronous methods and to create method call in a separate thread
+
