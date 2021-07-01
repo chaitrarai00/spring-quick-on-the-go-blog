@@ -14,11 +14,26 @@ Spring Container is the star all-rounder managing to give to readymade objects t
 Inversion of control(Outsourcing creation of Objects) is achieved by dependency injection:
 It’s a process by which objects define their dependencies (other objects they work with) through constructor arguments (constructor injection) or Properties set to objects (setter injection) after they are constructed or returned from a factory method. The spring container the injects those dependencies when it creates the bean.
 
+In spring the object one wants to inject or use can be just done by using a congif file or annotations(Say you sue interfaces you will have to create a child instance from the parent interface even if its generalised like
+
+```java
+Parent p=new child();
+//child is hardcoded and has to be changed when new child types are introduced
+```
+
+and this was addressed by spring's inversion of control by offering object factory)
+
 Beans are objects that are instantiated, assembled and managed by containers and is an important part of any application. @bean produces a bean to be managed by spring container.
 
 @Component: indicates a component. Such classes are considered as candidates for auto-detection when we use annotation based configuration and class path scanning.
 
-Configuration metadata represents how a developer instructs the Spring Container to instantiate, configure and assemble the objects in the application.( XML based, annotation based , java based )
+##Configuration of Spring Container
+
+> XML Configuration file
+> Java Annotations
+> Java Source Code
+
+Configuration metadata represents how a developer instructs the Spring Container to instantiate, configure and assemble the objects in the application.( XML configuration based, annotation based , java source code based )
 
 XML based configured as <bean/> and <beans/>, Import from other file using < import resource=“”/>, Instantiating a container: applicationcontext context = new application context(config.XML /class)
 
@@ -106,3 +121,20 @@ Spring @value is used to assign default values to variables and method arguments
 
 @Async is used to create asynchronous methods and to create method call in a separate thread
 
+##Spring Development start process
+
+> configure spring beans
+> create a spring container
+> retrieve beans from container
+
+**Configuring the bean**
+
+```xml
+<beans>
+  <bean id="myCoach"
+      class="com.example.springdemo.BaseballCoach">
+  </bean>
+</beans>
+```
+
+**Create a Spring container**
