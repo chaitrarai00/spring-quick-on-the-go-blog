@@ -137,4 +137,38 @@ Spring @value is used to assign default values to variables and method arguments
 </beans>
 ```
 
+> id is the name spring will use to access the bean
+
 **Create a Spring container**
+
+> creating the application context
+
+```java
+//creating application context to pick configuration from Configurationclass.class
+AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(Configurationclass.class);
+//creating application context to pick configuration from applicationContext.xml
+ClassPathXmlApplicationContext context=new ClassPathXmlApplicationContext("applicationContext.xml");
+```
+
+```java
+MyBeanSingleton beanSingleton=ctx.getBean(MyBeanSingleton.class);
+
+MyBeanXmlSingleton beanSingletonxml=context.getBean("myCoach",Coach.class);
+//Coach.clas is an interface
+```
+
+Full steps:
+
+```java
+
+//load configuartion
+AnnotationConfigApplicationContext annotationConfigApplicationContext=new AnnotationConfigApplicationContext(Configuartion.class);
+//get bean using context
+MyAnnotationApplication myAnnotationApplication=annotationConfigApplicationContext.getBean(MyAnnotationApplication.class);
+//call the method using the bean
+myAnnotationApplication.processMessage
+("You got to code and not listen to anyone", "Youfromthefuture@wellwish.com");
+//close the application context
+annotationConfigApplicationContext.close();
+
+```
