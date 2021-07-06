@@ -224,11 +224,77 @@ inject using configuration
 
 ```xml
 <bean id="myCakeOffers"
- class="com.example.springdemo,AnniversarySpecialCake">
+ class="com.example.springdemo.AnniversarySpecialCake">
 </bean>
 
 <bean id="myCake" class="com.example.springdemo.Orderno1">
 <constructor-arg ref="myCakeOffers"/>
 <!--Injected using constructor-->
+</bean>
+```
+
+##Setter Injection
+
+> create a setter in your class for injection
+> configure to inject dependecy using config file
+
+create setter for injection
+
+```java
+public class Orderno1 implements CakeOrders{
+  private CakeOffers cakeOffers;
+  private Cupcakes cupcakes;
+  private long cost;
+  public Orderno1(){
+      //needed while a bean is created
+  }
+  public void setCost(long cost){
+    this.cost=cost;
+  }
+  public void setAddCupcakes(Cupcakes cupcakes){
+    this.cupcakes=cupcakes;
+  }
+}
+...
+```
+
+inject using configuration in setter injection
+
+```xml
+<bean id="myCupCake"
+ class="com.example.springdemo.Cupcakes">
+</bean>
+
+<bean id="myCake" class="com.example.springdemo.Orderno1">
+<!--spring looks for setter with name setaddCupcakes and sets the value myCupCake-->
+<property name="addCupcakes" ref="myCupCake"/>
+<property name="cost" value=800/>
+<!--Injected objects or values using setter-->
+</bean>
+```
+
+##if you have to inject value from property file
+
+> create a properties file with consistent names
+> load properties file in spring config file
+> reference values from properties file using \$
+
+create info.properties:
+
+```java
+foo.email=manhasnoname@got.com
+foo.address=Bakers Street London
+```
+
+```xml
+<context:property-placeholder location="classpath:info.properties"/>
+
+...
+
+<bean id="myCake" class="com.example.springdemo.Orderno1">
+
+<property name="emailaddress" value="${foo.email}"/>
+<property name="fulladdress" value="${foo.address}"/>
+
 </bean>
 ```
