@@ -172,3 +172,63 @@ myAnnotationApplication.processMessage
 annotationConfigApplicationContext.close();
 
 ```
+
+Dependency Injection is the method of outsourcing construction of objects and injecting dependencies on top of it. Like you order a cake and say you want to a chocolate base and candy frosting with blueberry toppings or so.
+
+The Dependency injection lets us get the object which can be used for the application.
+
+##So spring container does the following
+
+> create and manage objects: Inversion of control
+> inject object's dependencies: Dependency Injection
+
+##Dependency Injection Types
+
+> Constructor Injection
+> Setter Injection
+
+##Constructor Injection
+
+> Define dependedency interface and class
+> create a constructor in your class for injection
+> inject dependecy using config file
+
+The dependency interface and class definition:
+
+```java
+public interface CakeOffers{
+  public String getSpecial();
+}
+
+public class AnniversarySpecialCake implements CakeOffers{
+  public String getSpecial(){
+    return "Today is our anniversary here you get a special add on";
+  }
+}
+```
+
+create constructor for injection
+
+```java
+public class Orderno1 implements CakeOrders{
+  private CakeOffers cakeOffers;
+
+  public Orderno1(CakeOffers cakeOffers){
+      this.cakeOffers=cakeOffers;
+  }
+}
+...
+```
+
+inject using configuration
+
+```xml
+<bean id="myCakeOffers"
+ class="com.example.springdemo,AnniversarySpecialCake">
+</bean>
+
+<bean id="myCake" class="com.example.springdemo.Orderno1">
+<constructor-arg ref="myCakeOffers"/>
+<!--Injected using constructor-->
+</bean>
+```
