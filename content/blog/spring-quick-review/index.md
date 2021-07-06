@@ -75,6 +75,8 @@ We can autowire a spring bean by the following ways:
 2. Autowire by type (setter injection: autowire:”ByType”)
    3.Autowire by constructor (constructor injection autowire=”constructor”, a aparamatrized constructor is needed)
 
+**Annotaions are Provide a label/marker a metadata about the class could be runtime or compile time**
+
 We use @Autowired annotation for spring bean annotation. They can be used on variables methods for autowiring by type and on constructors for constructor based auto wiring.
 @Qualifier is one of the annotation used in conjunction with @Autowire to avoid conflicts in bean mapping names. We provide the name that has to be used when autowiring occurs in parenthesis.
 Code spring annotations:
@@ -291,10 +293,45 @@ foo.address=Bakers Street London
 
 ...
 
-<bean id="myCake" class="com.example.springdemo.Orderno1">
+<bean id="myCake" class="com.example.springdemo.Orderno1" scope="singleton">
+<!--included scope just for reference as to how scopes are declared-->
 
 <property name="emailaddress" value="${foo.email}"/>
 <property name="fulladdress" value="${foo.address}"/>
 
 </bean>
 ```
+
+**_Bean Scopes_**
+This defines the life cycle of a bean.
+Answers questions like how long the bean will live? how many instances of a bean is created per context? how is the bean shared ?
+
+##types of bean scopes
+
+> singleton: create only **one instance** of the bean, it might be cached in memory and this **same bean will be shared** on every request to that bean. Its a **default scope**
+> prototype: for **each container request a new bean instance** is created
+> request: scope for HTTP web Requests.
+> session: scope for HTTP web sessions.
+> global-session: scoped for global web sessions
+
+##Bean Lifecycle
+
+> Container Starts
+> Bean is instantiated
+> Dependencies are injected
+> internal spring processing
+> custom init method
+> bean is ready for use
+> container shuts down
+> custom destroy method
+> bean lifecycle is over when application stops
+
+Create a custom init and destroy methods for cleanup (called hooks) and mention in configuartion entry
+
+```xml
+<bean id="myCake" class="com.example.springdemo.Orderno1" scope="singleton"
+init-method="anyinitmethodyoucreate"
+destroy-method="anydestroymethodyoucreate">
+```
+
+**A spring Application can have any number of configuration files**
