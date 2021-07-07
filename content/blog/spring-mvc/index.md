@@ -5,11 +5,13 @@ date: "2021-03-19T23:46:37.121Z"
 
 ![Spring MVC Architecture](./SpringMVCarch.png)
 Built on top of Servlet API with all Spring Core features is a sub framework of Spring used to build web applications. Spring MVC works implementing Model-view-controller design pattern.
-**Advantages:
->separate roles Model, View and controller
+##Advantages:
+
+> separate roles Model, View and controller
 > configuration using spring is easier and powerful
 > once configuration is done application development is fast
->easy to test and flexible
+> easy to test and flexible
+> process form data and help manage application states for web requests
 
 Spring MVC app steps:
 => Configure Dispatcher Servlet in web.xml
@@ -17,13 +19,12 @@ Spring MVC app steps:
 => Create View Resolver
 => Create Controller
 => Create a view to show page
- ![Spring MVC Architecture Working](./springmvcwork.png)
+![Spring MVC Architecture Working](./springmvcwork.png)
 InternalResourceViewResolver is used to mention the location of view pages and suffix used. The controller class returns the name of the view page and the respective location and suffix is picked from here.
 
 <annotation-driven />Tells Dispatcher servlet to look for controllers using annotations.
 
 <context:component-scan base-package="com.spring" />Tells dispatcher servlet where to look for controllers
-
 
 ```xml
 <init-param>
@@ -35,6 +36,7 @@ InternalResourceViewResolver is used to mention the location of view pages and s
 This is used to provide or mention the location of the configuration file.
 
 Dispatcher Servlet in web.xml:
+
 ```xml
 <servlet>
       <servlet-name>spring</param-name>
@@ -49,5 +51,5 @@ Dispatcher Servlet in web.xml:
 </servlet-mapping>
 
 ```
-Sending data from controller to view use model or ModelAndView
 
+Sending data from controller to view use model or ModelAndView
