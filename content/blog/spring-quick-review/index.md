@@ -288,6 +288,8 @@ foo.email=manhasnoname@got.com
 foo.address=Bakers Street London
 ```
 
+_You can also use @Value("\${foo.email}") on the property/ field name for poropertied to be injected on fields @PropertySource(classpath:some.properties) is added in @Configuration class in case of Java code DI_
+
 ```xml
 <context:property-placeholder location="classpath:info.properties"/>
 
@@ -332,6 +334,42 @@ Create a custom init and destroy methods for cleanup (called hooks) and mention 
 <bean id="myCake" class="com.example.springdemo.Orderno1" scope="singleton"
 init-method="anyinitmethodyoucreate"
 destroy-method="anydestroymethodyoucreate">
+<!--@PostCOnstruct @PreDestroy can also be used-->
 ```
 
 **A spring Application can have any number of configuration files**
+
+##xml configuration are a little problematic:
+
+> the are verbose
+> configuration is hectic and take time
+> adding anotations will e way easier
+> spring will scan the java classes and recognizes the special behaviour and automatically register
+
+##Development for spring Annotations:
+
+> Enable component scanning in Spring config file
+> Add annotation in the class
+> Retrieve bean from Spring
+
+```xml
+<context:component-scan base-package="com.example.spring"/>
+```
+
+**Spring Autoriwing:Injecting automatically on match**
+##Autowiring injection types:
+
+> _Chose any injection type you like but stay consistent throughout the applications_
+> Constructor Injection: create an interface and class with @COmponent and add contsructor for injection and configure DI using @Autowired on constructor
+> Setter Injection:create an interface and class with @Component and add setter methods in class for injection and configure DI using @Autowired on setter
+> Field Injection: configure dependency injection directly by using @Autowired on the field(even private once which internally uses reflection)
+> _if autowired components found by spring is ambiguous it will throw NoUniqueBeanDefinitionException and @Qualifier can be used to specify explicitly which bean is supposed to be used_
+
+_use no xml by using @Configuration and @ComponentScan to do spring configuration with Java Code_
+(Annotation based is using context:component-scan and Java BAsed is all Annotation using @Configuration)
+##Steps for Java Code COnfiguration:
+
+> Create a Java class with @Configuration
+> Add component scanning support using @ComponentScan(optional)
+> Read Spring Configuration class: new AnnotationCOnfigApplicationContext(Config.class);
+> Retrive Bean from Spring Container
