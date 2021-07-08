@@ -31,3 +31,78 @@ Advices are of following type based on execution strategy:
 @AfterReturning: advices executed only after joinpoint method is executed successfully
 @AfterThrowing: advices executed after the joinpoint method throws an exception only
 @Around: most powerful advice. This advice controls if the join point has to be executed or not (using proceed). One can add advices that need to be executed before and after the joinpoints l. Around advice actually handles calling of the joinpoint method and returning of values of joinpoint method
+
+```xml
+
+<!-- Enable AspectJ style of Spring AOP -->
+<aop:aspectj-autoproxy />
+
+<!-- Configure Employee Bean and initialize it -->
+<bean name="employee" class="com.spring.model.Employee">
+	<property name="name" value="Dummy Name"></property>
+</bean>
+
+<!-- Configure EmployeeService bean -->
+<bean name="employeeService" class="com.spring.service.EmployeeService">
+	<property name="employee" ref="employee"></property>
+</bean>
+
+<!-- Configure Aspect Beans, without this Aspects advices wont execute -->
+<bean name="employeeAspect" class="com.spring.aspect.EmployeeAspect" />
+<bean name="employeeAspectPointcut" class="com.spring.aspect.EmployeeAspectPointcut" />
+<bean name="employeeAspectJoinPoint" class="com.spring.aspect.EmployeeAspectJoinPoint" />
+<bean name="employeeAfterAspect" class="com.spring.aspect.EmployeeAfterAspect" />
+<bean name="employeeAroundAspect" class="com.spring.aspect.EmployeeAroundAspect" />
+<bean name="employeeAnnotationAspect" class="com.spring.aspect.EmployeeAnnotationAspect" />
+
+</beans>
+```
+
+```java
+@Aspect
+public class EmployeeAspectPointcut {
+
+	@Before("getNamePointcut()")
+	public void firstAdvice(){
+		System.out.println("executing the first advice using the predefined getNamePointcut()");
+	}
+
+	@Before("getNamePointcut()")
+	public void secondAdvice(){
+		System.out.println("executing the second advice using the predefined getNamePointcut()");
+	}
+
+	@Before("allMethodsPointcut()")
+	public void allmethodsadvice() {
+		System.out.println("executing the advice using the predefined allMethodsPointcut()");
+	}
+	/*
+	 * we define pointcuts which can be resued and called by other joinpoints with advice
+	 */
+	@Pointcut("execution(public String getName())")
+	public void getNamePointcut() {}
+
+	@Pointcut("within(com.spring.service.*)")
+	public void allMethodsPointcut() {}
+
+}
+```
+
+```java
+@Aspect
+public class EmployeeAspectJoinPoint {
+
+	@Before("execution(public void com.spring.aspects..set*(*)")
+	public void loggingwithtragetarg(JoinPoint joinPoint) {
+		//method to find the target method
+		System.out.println("Before running logging advice on method"+joinPoint.toString());
+		System.out.println("method arguments "+Arrays.toString(joinPoint.getArgs()));
+	}
+
+	//method to create advice for methods with exactly one argument, the argument name should be same a targeted method
+	@Before("args(name)")
+	public void logStringargument(String name) {
+		System.out.println("String argument passed is"+name);
+	}
+}
+```
