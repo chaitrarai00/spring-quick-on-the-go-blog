@@ -44,15 +44,29 @@ Spring Boot Actuator
 Spring Boot Actuator provides the medium to monitor and interact with the application by reflecting information via various endpoints. These built in endpoints lets us enable or disable them in our application.
 To configure actuators in spring boot we can add spring boot actuator dependency few endpoints might need spring security dependency too.
 Chance default endpoint base adding this in properperties file : management.endpoints.web.base-path=/management
-Known actuator endpoints:
-• bean: lists all the beans configured in the application (http://localhost:8080/management/beans)
-• env: provides information on the spring environment( http://localhost:8080/management/env)
-• health: shows the application health (http://localhost:8080/actuator/health)
-• info: displays application information and this can be configured using spring properties. If not configure by default it would be blank (http://localhost:8080/actuator/info)
-• mapping: list of @RequestMapping paths (http://localhost:8080/management/mappings)
-• shutdown: allows to shutdown the application
-• threaddump: provides the thread dump with respect to application (http://localhost:8080/management/threaddump)
+##Known actuator endpoints:
 
-all available actuator endpoints: https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints
+> bean: lists all the beans configured in the application (http://localhost:8080/management/beans)
+> env: provides information on the spring environment( http://localhost:8080/management/env)
+> health: shows the application health (http://localhost:8080/actuator/health)
+> info: displays application information and this can be configured using spring properties. If not configure by default it would be blank (http://localhost:8080/actuator/info)
+> mapping: list of @RequestMapping paths (http://localhost:8080/management/mappings)
+> shutdown: allows to shutdown the application
+> threaddump: provides the thread dump with respect to application (http://localhost:8080/management/threaddump)
+
+_all available actuator endpoints: https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints_
 
 We can create custom actuator endpoints using @Endpoint annotation on a class. Annotation to decide how to expose your custom endpoints are @ReadOperation, @WriteOperation and @DeleteOperation.
+
+```java
+@Endpoint(id="endpoint1")
+@Component
+public class CustomAnnotation {
+
+	@ReadOperation
+	@Bean
+	public String custome() {
+		return "Customs:{actuator endpoint}";
+	}
+}
+```

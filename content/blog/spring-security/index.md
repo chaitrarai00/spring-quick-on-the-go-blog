@@ -85,3 +85,13 @@ OAuth flows: ex: photo album website tries using google drive owned by user
 Oauth flow 1: Authorization Code Flow--- authorization server checks with resource owner and confirms if they wanted the client to access resource. Then after confirming with owner exchange auth token with client confirms and provides access token which provide further access to client and hence can communicate with resource server.
 Oauth flow 2: Implicit Flow--- it’s the same as above but without the auth token and directly gives access token to the client.
 Oauth flow 3: useful in microservices-Client credentials Flow – when client is very trustworthy eg: it’s a client or application you created the client--- difference service in bundle of microservice.
+
+##jwt steps
+
+> add spring secuirty, spring web, jjwt and jaxb dpeendencies(after java 9)
+> create a @Service to get user or authenticate details
+> create a jwtUtil class- given a username and password it generates a jwt key/token
+> (Jwts.builder.setClaims(claims).set....signWith(algo,secretkey).compact())
+> create a /authenticate mechanism where it will recieve the username and password and provide a jwt token only on valid username password as response
+> intercept all incoming request: create filter to check token once:extends OncePerRequestFilter(there are other filters too)in doFilterInternal validate token in header with the jwtUtil validateToken method
+> The generated jwttoken in response of /authenticate is supposed to be taken by client and send in header authorization with its requests to server
