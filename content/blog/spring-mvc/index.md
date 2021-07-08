@@ -141,10 +141,70 @@ public class HomeController{
             return "formspage";
             //menu menu is a simple jsp page
       }
-      @RequestMapping("/processForm")
-      public String processForm(){
+ @RequestMapping("/processForm")
+      public String processFormv1(){
             return "main menu";
 //access in jsp ${param.studentname}
       }
+}
+```
+
+_Model in controllers during request mapping_
+
+```java
+@RequestMapping("/home")
+public String home(Locale locale, Model model) {
+	Date date=new Date();
+	DateFormat dateFormat=DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG,locale);
+	String formattedDate=dateFormat.format(date);
+	model.addAttribute("serverTime", formattedDate);
+	return "home";
+}
+@RequestMapping("/uppercase")
+public String uppercase(HttpServletRequest request, Model model) {
+      //read request param from html form
+      String name=request.getParameter("studentname");
+      //covert to uppercase
+      name=name.toUpperCase();
+      //create message
+      String result="Hi!! "+name;
+      //add message to model
+      model.addAttribute("message",result);
+      //here message can be replaced by anything the attribute name is upto you as long as it is consistent
+      return "uppercase";
+}
+```
+
+Access the message in uppercase.jsp as
+
+```jsp
+<h1>The message is : ${message}</h1>
+```
+
+**Use @RequestParam to read form data: which allows us to read the data and automatically bind it to a parameter coming into your method**
+
+```java
+@RequestMapping("/uppercase")
+public String uppercase(@RequestParam("studentname") String name, Model model) {
+      //covert to uppercase
+      name=name.toUpperCase();
+      //create message
+      String result="Hi!! "+name;
+      //add message to model
+      model.addAttribute("message",result);
+      //here message can be replaced by anything the attribute name is upto you as long as it is consistent
+      return "uppercase";
+}
+```
+
+_Map parent mapping for all methods in the controller add RequestMapping on top of controller overall_
+_avoid ambiguos mapping with same path of request mapping? add parent mapping a relative mapping for all controllers_
+
+```java
+@Controller
+@RequestMapping("/baap")
+public class HomeController{
+      //other request mapping methods
+ }
 }
 ```
