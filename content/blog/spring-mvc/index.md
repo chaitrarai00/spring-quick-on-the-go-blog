@@ -138,12 +138,12 @@ showpage.jsp
 public class HomeController{
  @RequestMapping("/show")
       public String showMyPage(){
-            return "formspage";
+            return "showpage";
             //menu menu is a simple jsp page
       }
  @RequestMapping("/processForm")
       public String processFormv1(){
-            return "main menu";
+            return "mainmenu";
 //access in jsp ${param.studentname}
       }
 }
@@ -197,14 +197,35 @@ public String uppercase(@RequestParam("studentname") String name, Model model) {
 }
 ```
 
+**Model comes in empty initially and then attributes are added later**
+
 _Map parent mapping for all methods in the controller add RequestMapping on top of controller overall_
-_avoid ambiguos mapping with same path of request mapping? add parent mapping a relative mapping for all controllers_
+_avoid ambiguous mapping with same path of request mapping? add parent mapping a relative mapping for all controllers_
 
 ```java
 @Controller
 @RequestMapping("/baap")
 public class HomeController{
       //other request mapping methods
+      @RequestMapping("/bache")
+      public String bache(Model model){
+            //...
+      }
  }
 }
 ```
+
+_@ModelAttribute: bind it to the object parameter and get details from mvc form data : databinding is handled by spring_
+_@Valid is used to indicate that the object should be validated and result to be stored in BindingResult: This validation is to be used in Controller classes_
+_@InitBinder in a method would do a preprocessing on form validated input removed leading and trailing white spaces and if its a blank whitespace thats also removed and makes it null_
+
+**???Create a CUstome validation using @interface and Helper Validator class???**
+
+##Validation Annotations
+
+> @NotNull: checks that annotated values is not null
+> @Max/@Min: must be a value >= / <= the value
+> @Size: size must match the given size
+> @Pattern: must match a regular expression pattern
+> @Future/@Past: Date must be in future or past of given date
+> and many more....
