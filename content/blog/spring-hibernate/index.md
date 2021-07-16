@@ -1,7 +1,7 @@
 ---
-title: Spring JPA
+title: Spring Hibernate
 date: "2021-05-31T22:12:03.284Z"
-description: "Spring JPA"
+description: "Spring Hibernate"
 ---
 
 Need for hibernate: the object relation impedendence problem: a bridge between how object and databse values are stored.
@@ -14,6 +14,8 @@ Let’s see how and where Hibernate came from first
 • An ORM tool
 • Implements JPA
 • Used in data layer application
+
+_Hibernate makes use of jdbc in background for low level sql queries and is an abstarction on top of jdbc_
 
 Difference between jdbc and hibernate:
 JDBC Saving:
@@ -363,4 +365,50 @@ public class SampleDAO {
 //specify the timeout when db update should happen within
 
 }
+```
+
+##Hibernate Development Process
+
+> add hibernate configuration file
+
+> annotate the class- map class to db table and map fields to database column
+
+> develop java code to do database operation
+
+Entity class: POJO that is mapped to database
+
+```java
+@Entity(name="User_Details")
+public class UserDetails {
+
+	@Id
+	@Column(name="user_id")
+	private int userid;
+	@Column(name="user_name")
+	private String username;
+	public int getUserid() {
+		return userid;
+	}
+	public void setUserid(int userid) {
+		this.userid = userid;
+	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+}
+```
+
+_Session is used to get physical connection with the Database.Session object is lightweight and is designed to be instantiated when there is database interaction necessary. persistent objects are saved and retrieved using session object_
+
+_Session Factory is a heavy weight object which is created only once that reads the Hibernate config file, creates session objects_
+
+```java
+SessionFactory sessionFactory=new Configuration().configure().buildsessionFactory();
+Session session=sessionFactory.openSession();
+session.beginTransaction();
+UserDetails user=(UserDetails)session.get(UserDetails.class,1);
 ```
