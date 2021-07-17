@@ -378,19 +378,19 @@ public class SampleDAO {
 Entity class: POJO that is mapped to database
 
 ```java
-@Entity(name="User_Details")
-public class UserDetails {
+@Entity(name="Student")
+public class Student {
 
 	@Id
-	@Column(name="user_id")
-	private int userid;
+	@Column(name="id")
+	private int studentid;
 	@Column(name="user_name")
 	private String username;
-	public int getUserid() {
-		return userid;
+	public int getStudentid() {
+		return studentid;
 	}
-	public void setUserid(int userid) {
-		this.userid = userid;
+	public void setStudentid(int studentid) {
+		this.userid = studentid;
 	}
 	public String getUsername() {
 		return username;
@@ -402,13 +402,225 @@ public class UserDetails {
 }
 ```
 
-_Session is used to get physical connection with the Database.Session object is lightweight and is designed to be instantiated when there is database interaction necessary. persistent objects are saved and retrieved using session object_
+_Session is used to get physical connection with the Database.Session object is lightweight, short lived and is designed to be instantiated when there is database interaction necessary. Used to save and retrieve persistent objects. It wraps the JDBC COnnection. Its a retrieved from SessionObject._
 
-_Session Factory is a heavy weight object which is created only once that reads the Hibernate config file, creates session objects_
+_Session Factory is a heavy weight object which is created only once(its later used) that reads the Hibernate config file, creates session objects_
+
+**Create**
 
 ```java
-SessionFactory sessionFactory=new Configuration().configure().buildsessionFactory();
-Session session=sessionFactory.openSession();
-session.beginTransaction();
-UserDetails user=(UserDetails)session.get(UserDetails.class,1);
+SessionFactory sessionFactory=new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Student.class).buildsessionFactory();
+Session session=sessionFactory.getCurrentSession();
+try{
+	//use session object to save/retrieve Java objects
+	//create student
+	Student temp_student=new Student("Rodeger","Filch","rofil@keen.com");
+	//start the transaction
+	session.begintransaction();
+	//save the student
+	session.save(temp_student);
+	//read from database providing a primary key
+	Student myStudent=session.get(Student.class,6);
+	//commit the transaction
+	session.getTransaction.commit();
+}finally{
+	factory.close();
+}
 ```
+
+_Hibernate behind the scenes takes care of database connection from configuration file details and also figures out how Student has to be stored in the database_
+
+##Custom primary key generation strategy in Hibernate
+
+> Create subclass of org.hibernate.id.SequenceGenerator/IdentifierGenerator
+
+> Override method: public Serializable generate()
+
+> just make sure the generator strategy should work and produce unique values even in high volumes of data or multithreaded environment
+
+```java
+@Entity
+public class Department {
+
+@Id
+@GenericGenerator(name = "sequence_dep_id", strategy = "com.xyz.ids.DepartmentIdGenerator")
+@GeneratedValue(generator = "sequence_dep_id")
+@Column(name="Department_Id")
+private String deptId;
+
+@Column(name="Department_Name",unique=true,nullable=false)
+private String deptName;
+
+
+@Column(name="Department_Description")
+@NotNull
+private String deptDesc;
+
+//getters and setters
+```
+
+```java
+public class DepartmentIdGenerator implements IdentifierGenerator{
+
+    @Override
+    public Serializable generate(SessionImplementor session, Object object)
+            throws HibernateException {
+
+        String prefix = "DEP";
+        Connection connection = session.connection();
+
+        try {
+            Statement statement=connection.createStatement();
+
+            ResultSet rs=statement.executeQuery("select count(Department_Id) as Id from demo.Department");
+
+            if(rs.next())
+            {
+                int id=rs.getInt(1)+101;
+                String generatedId = prefix + new Integer(id).toString();
+                System.out.println("Generated Id: " + generatedId);
+                return generatedId;
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
+        return null;
+    }
+
+}
+```
+
+##Hibernate Query Language
+
+> Retrieve all students : Select \* from Student; List<Student> students=session.createQuery("from Student").getResultList();
+
+> Retrive students witn last name Potter: Select \* from Student where lastname='Potter';List<Student> potters= session.createQuery("from Student where lastname='Potter'").getResultList();
+
+> Use Or predicate: List<Student> potters= session.createQuery("from Student where lastname='Potter' OR lastname='Riddle'").getResultList();
+
+> Like predicate: List<Student> students=session.createQuery("from Student where email LIKE '%hogwarts.com'").getResultList()
+
+**Read/Retrieve**
+
+```java
+SessionFactory sessionFactory=new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Student.class).buildsessionFactory();
+Session session=sessionFactory.getCurrentSession();
+try{
+	//start the transaction
+	session.begintransaction();
+	//read from database providing a primary key
+	Student myStudent=session.get(Student.class,6);
+	//commit the transaction
+	session.getTransaction.commit();
+}finally{
+	factory.close();
+}
+```
+
+**Update**
+
+```java
+SessionFactory factory=new COnfiguration().configure("hibenrate.cfg.xml").addAnnotatedClass(Student.class).buildSessionFactory();
+Session session=factory.getCurrentSession();
+try{
+	//begin transaction
+	session.beginTransaction();
+	//get the object based on primary key you need to update
+	Student student_modification=session.get(Student.class,6);
+	//use setters to update values
+	student_modification.setLastName("Malfoy");
+	//commit the transaction
+	session.getTransaction.commit();
+}finally{
+	factory.close();
+}
+```
+
+say you update all the students may be using hql
+
+```java
+session.createQuery("update Student set email='umbridge@hogwarts.com'").executeUpdate();
+```
+
+**Delete**
+
+```java
+SessionFactory factory=new COnfiguration().configure("hibenrate.cfg.xml").addAnnotatedClass(Student.class).buildSessionFactory();
+Session session=factory.getCurrentSession();
+try{
+	//begin transaction
+	session.beginTransaction();
+	//get the object based on primary key you need to delete
+	Student student_remove=session.get(Student.class,6);
+	//delete the object
+	session.delete(student_remove);
+	//commit the transaction
+	session.getTransaction.commit();
+}finally{
+	factory.close();
+}
+```
+
+or with hql without retrieving but with a single line(_point of HQL is conciseness_)
+
+```java
+session.createQuery("delete from Student where id=2").executeUpdate();
+```
+
+##Advanced mapping
+
+> one to one: One profile for one professor
+
+> one to many/ many to one: One instructor teaching many courses and inverse
+
+> many to many: many students take many students
+
+_Cascade is the method where 2 related tables with a foreign key should do operations in both the tables. eg: We have a table employee and employee details table when an employee is deleted from employee table the details are normally deleted from the employee details table too_
+
+**One to One Mapping:Unidirectional**
+
+```java
+@Entity
+@Table(name="instructor_detail")
+public class InstructorDetail {
+
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id")
+	private int id;
+	@Column(name="youtube_channel")
+	private String youtubeChannel;
+	@Column(name="hobby")
+	private String Hobby;
+
+	//getters and setters
+}
+```
+
+```java
+@Entity
+@Table(name="instructor")
+public class Instructor {
+
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id")
+	private int id;
+	@Column(name="first_name")
+	private String firstname;
+	@Column(name="last_name")
+	private String lastname;
+	@Column(name="email")
+	private String email;
+	//getters and setters
+}
+```
+
+**One to One Mapping:Bidirectional**
+**One to Many Mapping:Unidirectional**
+**One to Many Mapping:Bidirectional**
+**Many to Many Mapping:Unidirectional**
+**Many to Many Mapping:Bidirectional**
