@@ -195,7 +195,7 @@ Hibernate when it runs, when accessing an object creates a proxy object( that is
 @NotFound(action=NotFoundAction.IGNORE)
 ```
 
- Cascade is used to persis objects in case of one to many relationships. Let’s unsaved objects to be saved on save of one object
+ Cascade is used to persist objects in case of one to many relationships. Let’s unsaved objects to be saved on save of one object
 
 ```java
 @OnetoMany(cascade=CascadeType.PERSIST)
@@ -258,6 +258,19 @@ Delete:
 UserDetails user=(UserDetails)session.get(UserDetails.class,6);
 session.delete(user);
 ```
+
+##Entity Lifecycle
+![Entity Lifecycle](./Hibernate_entitylifecycle.PNG)
+
+> Detached: Entity is not associated with a hibernate session
+
+> Merge: Entity once detached from session, then can merge it to reattach it to the session
+
+> Persist: Transitions a new instance to a managed state of hibernate. One the next flush/commit it will be saved in DB
+
+> Remove: Takes a manged entity and removes it. On next flush/commit it will be deleted from the DB
+
+> Refresh: Allows you to reload/sync object from the db. Prevents having stale data that is different from the DB.
 
 **_Transient, Persistent and Detached object_**
 
@@ -609,6 +622,9 @@ public class Instructor {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
 	private int id;
+	@OnetoOne
+	@JoinColumn(name="instructor_detail")
+	private int instructordetail;
 	@Column(name="first_name")
 	private String firstname;
 	@Column(name="last_name")
@@ -619,6 +635,20 @@ public class Instructor {
 }
 ```
 
+@OnetoOne
+@JoinColumn(name="instructor_detail")
+These are used to hookup the instructordetails to instructor table and then hibernated manages the mapping accordingly using foreign key using the reference of joinColumn
+
+Configure Cascade Type: @OnetoOne(cascade=CascadeType.ALL)
+_By Default no operations are cascaded_
+
+```java
+@OnetoOne(cascade={CasacadeType.PERSIST,CasacadeType.MERGE})
+@JoinColumn(name="instructor_detail")
+private int instructordetail;
+```
+
+onetoopnedelet entity--video pause
 **One to One Mapping:Bidirectional**
 **One to Many Mapping:Unidirectional**
 **One to Many Mapping:Bidirectional**
