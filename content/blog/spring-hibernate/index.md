@@ -167,11 +167,25 @@ private Set<Address> addresses=new HashSet<>();
 if primary key is embedded mention it as @EmbeddedId
 and joining and mui
 
-**_Lazy Initialization and Early Initialization_**
-Lazy Initilization is a strategy where when an object is initialized only the first level members are initlize, the associated objects are initialized only when they are explicitly accesed (like address in above example) that means when in need.This is used by default in hibernate and saves a lot of time and resources.
-Eager Intialization is the opposite here the all objects and associated objects are initilaised at once.
-When in need Hibernate can be oved from its default behariour to be eager by making fetch=FetchType.EAGER.
+##Lazy Initialization and Eager Initialization
+
+> Eager loads all dependent entities at once
+
+> Lazy Initilization(Load on Demand) is a strategy where when an object is initialized only the first level members are initialized, the associated objects are initialized only when they are explicitly accesed (like address in above example) that means when in need.
+
+> Eager Intialization is the opposite here the all objects and associated objects are initilaised at once.
+
+> When in need Hibernate can be moved from its default behariour to be eager by making fetch=FetchType.EAGER.
+
+> These is used by default in hibernate and saves a lot of time and resources
+
+> OnetoOne: FetchType.EAGER
+> OnetoMany:FetchType.LAZY
+> ManytoOne:FetchType.EAGER
+> ManytoMany:FetchType.LAZY
+
 Hibernate when it runs, when accessing an object creates a proxy object( that is a subclass of the real object hence having the same behavior)it tries to access and it operates on top of this proxy and does the operation.
+
 **_DataBase entries during Association types( OnetoOne Manytomany onetomany and vice versa)_**
 @OnetoOne
 
@@ -648,9 +662,202 @@ _By Default no operations are cascaded_
 private int instructordetail;
 ```
 
-onetoopnedelet entity--video pause
 **One to One Mapping:Bidirectional**
+We create mapping both ways: we create a mapping to instructor from InstructorDetails too
+
+mappedBy="instructor_detail" tells hibernate that the instructor_detail property is mapped in instructor class
+
+```java
+@Entity
+@Table(name="instructor_detail")
+public class InstructorDetail {
+
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id")
+	private int id;
+	@OnetoOne(mappedBy="instructor_detail")
+	private int instructor;
+	@Column(name="youtube_channel")
+	private String youtubeChannel;
+	@Column(name="hobby")
+	private String Hobby;
+
+	//getters and setters
+}
+```
+
+```java
+@Entity
+@Table(name="instructor")
+public class Instructor {
+
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id")
+	private int id;
+	@OnetoOne
+	@JoinColumn(name="instructor_detail")
+	private int instructordetail;
+	@Column(name="first_name")
+	private String firstname;
+	@Column(name="last_name")
+	private String lastname;
+	@Column(name="email")
+	private String email;
+	//getters and setters
+}
+```
+
 **One to Many Mapping:Unidirectional**
+Usecase: Delete all reviews on course deletion
+
+```java
+@Entity
+@Table(name="course")
+public class Course {
+
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id")
+	private int id;
+	@Column(name="title")
+	private String title;
+	@Column(name="instructor_id")
+	private String instructorid;
+	@OnetoMany(cascade=CascadeType.ALL)
+	@JoinColumn(name="course_id")
+	private List<Review> reviews;
+	//getters and setters
+}
+```
+
+```java
+@Entity
+@Table(name="review")
+public class Review {
+
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id")
+	private int id;
+	@Column(name="comment")
+	private String comment;
+	@Column(name="course_id")
+	private String courseid;
+
+	//getters and setters
+}
+```
+
 **One to Many Mapping:Bidirectional**
-**Many to Many Mapping:Unidirectional**
-**Many to Many Mapping:Bidirectional**
+Usecase: Do not Delete a course is instructor is deleted, or do not delete an instructor on course deletion
+
+```java
+@Entity
+@Table(name="instructor")
+public class Instructor {
+
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id")
+	private int id;
+	@OnetoOne
+	@JoinColumn(name="instructor_detai l")
+	private int instructordetail;
+	@Column(name="first_name")
+	private String firstname;
+	@Column(name="last_name")
+	private String lastname;
+	@Column(name="email")
+	private String email;
+	@OnetoMany(mappedby="instructor",
+	cascade={CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE})
+	private List<Course> courses;
+	//getters and setters
+}
+```
+
+```java
+@Entity
+@Table(name="course")
+public class Course {
+
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id")
+	private int id;
+	@Column(name="title")
+	private String title;
+	@ManytoOne
+	@JoinColumn(name="instructor")
+	private String instructor;
+	@OnetoMany
+	@JoinColumn(name="course_id")
+	private List<Review> reviews;
+	//getters and setters
+}
+```
+
+##@OnetoMany(mappedby="instructor") Tells hibernate:
+
+> Look at the instructor property in Course class
+
+> use information from Course class @JoinColumn
+
+> Helps find associated courses for an instructor
+
+**Many to Many Mapping**
+```java
+@Entity
+@Table(name="course")
+public class Course {
+
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id")
+	private int id;
+	@Column(name="title")
+	private String title;
+	@ManytoOne
+	@JoinColumn(name="instructor")
+	private String instructor;
+	@OnetoMany
+	@JoinColumn(name="course_id")
+	private List<Review> reviews;
+	@ManytoMany
+	@JoinTable(
+		name="course_student",
+		@joinColumns=@JoinColumn(name="course_id"),
+		@inverseJoinColumns=@JoinColumn("studentid")
+	)
+	private List<Student> students
+	//getters and setters
+}
+```
+@JoinTable is the joining table to relate the 2 tables one has the realtionship and defines the joining attrubutes
+
+```java
+@Entity(name="Student")
+public class Student {
+
+	@Id
+	@Column(name="id")
+	private int studentid;
+	@Column(name="user_name")
+	private String username;
+	public int getStudentid() {
+		return studentid;
+	}
+	public void setStudentid(int studentid) {
+		this.userid = studentid;
+	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+}
+```
