@@ -808,6 +808,7 @@ public class Course {
 > Helps find associated courses for an instructor
 
 **Many to Many Mapping**
+
 ```java
 @Entity
 @Table(name="course")
@@ -829,13 +830,15 @@ public class Course {
 	@JoinTable(
 		name="course_student",
 		@joinColumns=@JoinColumn(name="course_id"),
-		@inverseJoinColumns=@JoinColumn("studentid")
+		@inverseJoinColumns=@JoinColumn(name="studentid")
 	)
 	private List<Student> students
 	//getters and setters
 }
 ```
-@JoinTable is the joining table to relate the 2 tables one has the realtionship and defines the joining attrubutes
+
+@JoinTable is the joining table to relate the 2 tables one has the realtionship and defines the joining attrubutes.
+@joincolumns is the same side and @inverseJoinColumns is the other side
 
 ```java
 @Entity(name="Student")
@@ -846,6 +849,10 @@ public class Student {
 	private int studentid;
 	@Column(name="user_name")
 	private String username;
+	@ManytoMany
+	@JoinTable(name="course_student",
+	@joincolumns=@JoinColumn(name="studentid"),@inverseJoinColumns=@JoinColumn(name="course_id"))
+	private List<Course> courses;
 	public int getStudentid() {
 		return studentid;
 	}
