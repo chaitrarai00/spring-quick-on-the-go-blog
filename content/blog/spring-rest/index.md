@@ -123,3 +123,77 @@ public class HomeController{
 }
 ```
 *Spring Rest Exception Handling*
+##We will create a custome error response in JSON
+
+>Create a custom error response class which will be sent back as JSON to client
+
+```java
+public class StudentErrorResponse{
+  private int status;
+  private String message;
+  private long timestamp;
+  //constructor
+  //getters and setters
+}
+```
+
+>Create a custom exception class: usecase StudentNotFoundException
+```java
+public class StudentNotFoundException extends RuntimeException{
+  public StudentNotFoundException(String message){
+    super(message);
+  }
+}
+```
+
+>Update REST service to throw exception accordingly
+```java
+@RestController
+@RequestMapping("/api")
+public class StudentRestController{
+  @GetMapping("/students/{studentId}")
+  public Student getStudent(@PathVariable int studentid){
+    //check studentid against list
+    if((studentid>=Studentlist.size) || (studentid<0))
+    throw new StudentNotFoundException("Student id not Found "+studentid);
+  }
+}
+```
+
+>Add Exception Handler Method: define exception handler method with @ExceptionHandler annotation returning a ResponseEntity(wrapper for Http response object)
+
+```java
+@RestController
+@RequestMapping("/api")
+public class StudentRestController{
+  @ExceptionHandler
+  public ResponseEntity<StudentErrorResponse> handleException(StudentNotFoundException exp){
+    StudentErrorResponse error= new StudentErrorResponse();
+    error.setStatus(HttpStatus.NOT_FOUND.value());
+    error.setMessage(exp.getMessage());
+    error.setTimeStamp(System.currentTimeMillis());
+    return ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+  }
+}
+```
+
+>@ExceptionHandler has the method defined returning a ResponseEntity of type of Response StudentErrorResponse and setting respective values for handling the exception StudentNotFoundException inside it
+
+>@ExceptionHandler is only for specific controller and cannot be used by other controllers so we might need a global exception handlers: @ControllerAdvice
+
+>@ControllerAdvice is a real time use of AOP
+
+```java
+@ControllerAdvice
+public class ExceptionHandlingClass {
+	
+	@ExceptionHandler
+	public String exceptionHandler(NullPointerException exp) {
+	ErrorResponse error= new ErrorResponse();
+    error.setStatus(HttpStatus.NOT_FOUND.value());
+    error.setMessage(exp.getMessage());
+    error.setTimeStamp(System.currentTimeMillis());
+    return ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+	}
+}
+```
