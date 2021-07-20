@@ -41,15 +41,19 @@ Restful Resource Uri best practices :
 Http Methods:
 • different http methods use Same uri (GET,POST: add new resource, OUT: update resource by replacing old one with new one, DELETE)
 
+> GET: request a response representation of the specified resource. it only retrieves data
 
-GET: request a response representation of the specified resource. it only retrieves data
-HEAD: Response is identical to GET but is asked without a response body
-POST: Used to submit entity to a specified resource. This often causes change in state or side effect on server.more like create
-PUT: replace all current representation of the target resource with request payload. more like update
-DELETE: deletes a sprcified resource
-OPTIONS: used to describe communication options for target resource
-PATCH: a partial modification to a resource is applied
+> HEAD: Response is identical to GET but is asked without a response body
 
+> POST: Used to submit entity to a specified resource. This often causes change in state or side effect on server.more like create
+
+> PUT: replace all current representation of the target resource with request payload. more like update
+
+> DELETE: deletes a sprcified resource
+
+> OPTIONS: used to describe communication options for target resource
+
+> PATCH: a partial modification to a resource is applied
 
 • Differentiate the methods--- GET is said to be read only and put, post and delete write only. By default Get method is said to be repeatable and have no effects on the server. Put and delete also do not have effects on server even if its write since they put or update the same resource and end result is same. And deleting the same resource multiple time would mean its deleted the first time and later has no effect hence its safely repeatable (so GET,PUT and DELETE are idempotent). But now if we consider a POST it would lead to multiple duplicate entries in the server (its not idempotent). There is one more concept called the safe methods. All safe methods are idempotent but all idempoent are not safe(Put and Delete are not safe but are iudempotent) a method is safe if it does not alter the state of the server like GET,HEAD or OPTIONS
 • Get method is a cacheable method
